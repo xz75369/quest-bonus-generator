@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { PlayerStats, QuestEvent } from '../types/game';
@@ -28,13 +27,11 @@ const Index = () => {
   const [isChoiceMade, setIsChoiceMade] = useState(false);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
   
-  // Initialize the game with a quest
   useEffect(() => {
     const initialQuest = generateQuestEvent();
     setQuests([initialQuest]);
   }, []);
   
-  // Handle character movement animation
   useEffect(() => {
     if (isMoving) {
       const timer = setTimeout(() => {
@@ -44,32 +41,25 @@ const Index = () => {
     }
   }, [isMoving]);
   
-  // Handle the next button click
   const handleNextClick = () => {
     if (isChoiceMade) {
-      // If a choice was made, reset and continue
       setIsChoiceMade(false);
       setChoiceResult(null);
     }
     
-    // Generate new quest
     const newQuest = generateQuestEvent();
     setQuests([...quests, newQuest]);
     
-    // Apply quest bonuses to player stats
     const questBonuses = newQuest.bonusEffects;
     updatePlayerStats(questBonuses);
     
-    // Increment day
     setPlayerStats(prev => ({
       ...prev,
       day: prev.day + 1
     }));
     
-    // Animate character
     setIsMoving(true);
     
-    // Occasionally grant a new skill
     if (Math.random() > 0.7) {
       const newSkill = generateRandomSkill();
       toast({
@@ -79,14 +69,12 @@ const Index = () => {
     }
   };
   
-  // Handle choice selection
   const handleChoiceSelected = (questIndex: number, choiceIndex: number) => {
     const quest = quests[questIndex];
     if (quest.choices && quest.choices[choiceIndex]) {
       const choice = quest.choices[choiceIndex];
       setChoiceResult(choice.result);
       
-      // Show bonus effects in toast
       if (choice.bonusEffects.length > 0) {
         const bonusDescriptions = choice.bonusEffects.map(bonus => 
           `${bonus.icon} ${bonus.description}`
@@ -103,7 +91,6 @@ const Index = () => {
     }
   };
   
-  // Update player stats based on bonus effects
   const updatePlayerStats = (bonusEffects: any[]) => {
     setPlayerStats(prev => {
       const newStats = { ...prev };
@@ -113,7 +100,6 @@ const Index = () => {
           case 'cultivation':
           case 'experience':
             newStats.experience += bonus.value;
-            // Level up if enough experience
             if (newStats.experience >= newStats.maxExperience) {
               newStats.level += 1;
               newStats.experience -= newStats.maxExperience;
@@ -167,13 +153,10 @@ const Index = () => {
               <p>{choiceResult}</p>
             </div>
           )}
-          
-          <div className="flex justify-center mt-6">
-            <NextButton onClick={handleNextClick} />
-          </div>
         </div>
       </div>
       
+      <NextButton onClick={handleNextClick} />
       <GameCharacter isMoving={isMoving} />
       <GameBottomBar stats={playerStats} />
     </div>
