@@ -24,11 +24,11 @@ const QuestCard: React.FC<QuestCardProps> = ({ quest, onChoiceSelected }) => {
       )}
       
       {quest.choices && (
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
           {quest.choices.map((choice, index) => (
             <button
               key={index}
-              className="text-center bg-game-ui-bg border-2 border-game-ui-border hover:bg-game-ui-border hover:bg-opacity-20 rounded-lg px-4 py-6 transition-colors flex flex-col items-center"
+              className="text-center bg-game-ui-bg border border-game-ui-border hover:bg-game-ui-border hover:bg-opacity-20 rounded-xl px-3 py-5 transition-colors flex flex-col items-center active:scale-95"
               onClick={() => onChoiceSelected && onChoiceSelected(index)}
             >
               <div className="text-lg font-medium">{choice.text}</div>
