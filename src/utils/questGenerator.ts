@@ -1,4 +1,3 @@
-
 import { BonusEffect, QuestEvent, QuestChoice } from "../types/game";
 
 // Quest Templates
@@ -11,6 +10,18 @@ const questTemplates = [
   "你在{location}发现了一个古老的{object}，上面刻着奇怪的符文。",
   "一位{character}向你发起挑战，你{action}并获得了胜利。",
   "穿过{location}时，你遇见了{character}，他向你传授了{subject}的心得。"
+];
+
+// Choice templates
+const choiceTemplates = [
+  "前方出现三条小路，你决定选择哪一条？",
+  "遇到一位神秘商人，他提供了三种物品，你会选择哪一个？",
+  "修炼到关键时刻，你感受到三种不同的灵气流向，你会引导哪一种？",
+  "一位前辈提出三种修炼方式，你会选择哪一种？",
+  "你找到一本古籍，上面记载了三种功法，你会修炼哪一种？",
+  "村庄中有三位奇人，各有所长，你会向谁请教？",
+  "山洞中有三个石室，各有不同的气息，你会进入哪一个？",
+  "遭遇危机，你有三种应对方式，你会选择哪一种？"
 ];
 
 const locations = [
@@ -72,6 +83,27 @@ const bonusIcons: Record<BonusEffect['type'], string> = {
   coins: '💰',
 };
 
+// Choice descriptions
+const choiceDescriptions = [
+  ["向左走，那里似乎有水声", "向右走，那里有奇怪的光芒", "直走，保持在主路上"],
+  ["购买神秘药水", "选择古老武器", "挑选灵气石"],
+  ["引导火属性灵气", "吸收水属性灵气", "融合风属性灵气"],
+  ["苦修增强体魄", "静心凝聚神识", "实战提升技巧"],
+  ["学习攻击功法", "研习防御心法", "掌握辅助神通"],
+  ["向武道大师请教", "拜访丹药炼制师", "寻找隐世奇人"],
+  ["进入充满火热气息的石室", "选择水汽弥漫的石室", "前往清风徐来的石室"],
+  ["正面应对", "智取化解", "暂时避让"]
+];
+
+// Result templates
+const resultTemplates = [
+  "你的选择让你{description}，获得了意想不到的收获。",
+  "这个决定{description}，你感到修为有所增长。",
+  "你的判断{description}，这次经历让你成长不少。",
+  "选择过后，你{description}，收获了宝贵的经验。",
+  "这次决定让你{description}，获得了难得的机遇。"
+];
+
 // Function to replace template variables with random values
 const fillTemplate = (template: string): string => {
   return template
@@ -108,40 +140,82 @@ const generateRandomBonus = (): BonusEffect => {
   };
 };
 
+// Generate more significant bonuses for choices
+const generateChoiceBonus = (): BonusEffect[] => {
+  const count = Math.floor(Math.random() * 2) + 1;  // 1-2 bonuses
+  const result: BonusEffect[] = [];
+  
+  for (let i = 0; i < count; i++) {
+    const type = bonusTypes[Math.floor(Math.random() * bonusTypes.length)];
+    // Higher values for choices (100-200)
+    const value = Math.floor(Math.random() * 100) + 100;
+    
+    const descriptions: Record<BonusEffect['type'], string> = {
+      cultivation: `修为 +${value}`,
+      health: `生命 +${value}`,
+      defense: `防御 +${value}`,
+      experience: `经验 +${value}`,
+      coins: `金币 +${value}`,
+    };
+
+    result.push({
+      type,
+      value,
+      description: descriptions[type],
+      icon: bonusIcons[type],
+    });
+  }
+  
+  return result;
+};
+
 // Generate a new quest event
 export const generateQuestEvent = (): QuestEvent => {
-  const template = questTemplates[Math.floor(Math.random() * questTemplates.length)];
-  const text = fillTemplate(template);
+  // Increase the chance of choice quests to 70%
+  const isChoiceQuest = Math.random() < 0.7;
   
-  // Generate 1-3 random bonus effects
-  const numBonuses = Math.floor(Math.random() * 3) + 1;
-  const bonusEffects: BonusEffect[] = [];
-  
-  for (let i = 0; i < numBonuses; i++) {
-    bonusEffects.push(generateRandomBonus());
-  }
-  
-  // Sometimes generate choices
-  const hasChoices = Math.random() > 0.7;
-  let choices: QuestChoice[] = [];
-  
-  if (hasChoices) {
-    const numChoices = Math.floor(Math.random() * 2) + 2; // 2-3 choices
+  if (isChoiceQuest) {
+    const choiceIndex = Math.floor(Math.random() * choiceTemplates.length);
+    const text = choiceTemplates[choiceIndex];
     
-    for (let i = 0; i < numChoices; i++) {
+    // Generate 3 choices
+    const choices: QuestChoice[] = [];
+    const choiceTexts = choiceDescriptions[choiceIndex];
+    
+    for (let i = 0; i < 3; i++) {
+      const resultTemplate = resultTemplates[Math.floor(Math.random() * resultTemplates.length)];
+      const result = resultTemplate.replace('{description}', descriptions[Math.floor(Math.random() * descriptions.length)]);
+      
       choices.push({
-        text: `选择${i + 1}: ${fillTemplate("尝试{action}")}`,
-        result: fillTemplate("你{action}，结果{description}"),
-        bonusEffects: [generateRandomBonus()]
+        text: choiceTexts[i],
+        result: result,
+        bonusEffects: generateChoiceBonus()
       });
     }
+    
+    return {
+      text,
+      bonusEffects: [],
+      choices: choices
+    };
+  } else {
+    const template = questTemplates[Math.floor(Math.random() * questTemplates.length)];
+    const text = fillTemplate(template);
+    
+    // Generate 1-3 random bonus effects
+    const numBonuses = Math.floor(Math.random() * 3) + 1;
+    const bonusEffects: BonusEffect[] = [];
+    
+    for (let i = 0; i < numBonuses; i++) {
+      bonusEffects.push(generateRandomBonus());
+    }
+    
+    return {
+      text,
+      bonusEffects,
+      choices: undefined
+    };
   }
-  
-  return {
-    text,
-    bonusEffects,
-    choices: hasChoices ? choices : undefined
-  };
 };
 
 // Generate a random skill
