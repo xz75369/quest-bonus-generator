@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Game theme colors
+				game: {
+					'bg': '#e3f0dd',
+					'ground': '#e8c387',
+					'ui-bg': '#f0e4cf',
+					'ui-border': '#c49a5a',
+					'text': '#5a3c1e',
+					'highlight': '#ff9d3e',
+					'button': '#a3d65c',
+					'health': '#ff6b6b',
+					'cultivation': '#4caf50',
+					'resource': '#5d4037',
+					'spirit': '#9c27b0',
 				}
 			},
 			borderRadius: {
@@ -84,11 +99,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-5px)' },
+				},
+				'pulse-light': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-light': 'pulse-light 2s ease-in-out infinite',
 			}
 		}
 	},
