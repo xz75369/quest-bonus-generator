@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { PlayerStats, QuestEvent } from '../types/game';
 import { generateQuestEvent, generateRandomSkill } from '../utils/questGenerator';
@@ -27,6 +28,9 @@ const Index = () => {
   const [isChoiceMade, setIsChoiceMade] = useState(false);
   const [choiceResult, setChoiceResult] = useState<string | null>(null);
   
+  const latestQuestRef = useRef<HTMLDivElement>(null);
+  const choiceResultRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     const initialQuest = generateQuestEvent();
     setQuests([initialQuest]);
@@ -40,6 +44,20 @@ const Index = () => {
       return () => clearTimeout(timer);
     }
   }, [isMoving]);
+  
+  // Scroll to latest quest when quests are updated
+  useEffect(() => {
+    if (latestQuestRef.current) {
+      latestQuestRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [quests]);
+  
+  // Scroll to choice result when it appears
+  useEffect(() => {
+    if (choiceResult && choiceResultRef.current) {
+      choiceResultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [choiceResult]);
   
   const handleNextClick = () => {
     if (isChoiceMade) {
@@ -136,20 +154,24 @@ const Index = () => {
       
       <div className="pt-20 pb-40 px-4">
         <div className="max-w-md mx-auto">
-          {quests.slice(-3).map((quest, index) => (
-            <QuestCard 
+          {quests.slice(-3).map((quest, index, displayedQuests) => (
+            <div 
               key={index}
-              quest={quest}
-              onChoiceSelected={
-                index === quests.length - 1 && !isChoiceMade 
-                  ? (choiceIndex) => handleChoiceSelected(index, choiceIndex)
-                  : undefined
-              }
-            />
+              ref={index === displayedQuests.length - 1 ? latestQuestRef : null}
+            >
+              <QuestCard 
+                quest={quest}
+                onChoiceSelected={
+                  index === displayedQuests.length - 1 && !isChoiceMade 
+                    ? (choiceIndex) => handleChoiceSelected(index + quests.length - displayedQuests.length, choiceIndex)
+                    : undefined
+                }
+              />
+            </div>
           ))}
           
           {choiceResult && (
-            <div className="game-card">
+            <div className="game-card" ref={choiceResultRef}>
               <p>{choiceResult}</p>
             </div>
           )}
