@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { PlayerStats, QuestEvent } from '../types/game';
 import { generateQuestEvent, generateRandomSkill } from '../utils/questGenerator';
 import GameTopBar from '../components/GameTopBar';
@@ -85,6 +85,19 @@ const Index = () => {
     if (quest.choices && quest.choices[choiceIndex]) {
       const choice = quest.choices[choiceIndex];
       setChoiceResult(choice.result);
+      
+      // Show bonus effects in toast
+      if (choice.bonusEffects.length > 0) {
+        const bonusDescriptions = choice.bonusEffects.map(bonus => 
+          `${bonus.icon} ${bonus.description}`
+        ).join(', ');
+        
+        toast({
+          title: "获得增益效果！",
+          description: bonusDescriptions,
+        });
+      }
+      
       updatePlayerStats(choice.bonusEffects);
       setIsChoiceMade(true);
     }

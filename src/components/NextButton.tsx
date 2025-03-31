@@ -8,7 +8,7 @@ interface NextButtonProps {
 const NextButton: React.FC<NextButtonProps> = ({ onClick }) => {
   return (
     <button 
-      className="next-button animate-pulse-light bg-gradient-to-r from-amber-500 to-yellow-600 text-white py-3 px-6 rounded-lg flex items-center justify-center text-lg shadow-lg hover:shadow-xl transition-all duration-300" 
+      className="next-button animate-pulse-light bg-gradient-to-r from-amber-500 to-yellow-600 text-white py-3 px-8 rounded-lg flex items-center justify-center text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105" 
       onClick={onClick}
     >
       <span className="mr-2">下一步</span>
