@@ -118,3 +118,19 @@
     @apply bg-game-button hover:brightness-105 active:brightness-95 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all duration-200 flex items-center justify-center gap-2;
   }
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(-50%);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+  100% {
+    transform: translateY(0px) translateX(-50%);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

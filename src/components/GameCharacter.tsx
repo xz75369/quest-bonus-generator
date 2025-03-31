@@ -7,11 +7,11 @@ interface GameCharacterProps {
 
 const GameCharacter: React.FC<GameCharacterProps> = ({ isMoving }) => {
   return (
-    <div className={`absolute bottom-32 left-1/2 transform -translate-x-1/2 ${isMoving ? 'animate-float' : ''}`}>
+    <div className={`absolute bottom-28 left-1/2 transform -translate-x-1/2 ${isMoving ? 'animate-float' : ''}`}>
       <img 
-        src="/lovable-uploads/d2ba2c0f-906e-4280-bfb4-46cf00d63772.png" 
+        src="https://images.unsplash.com/photo-1501286353178-1ec881214838?q=80&w=400" 
         alt="Game Character" 
-        className="h-32 object-contain"
+        className="h-40 object-contain drop-shadow-xl"
         onError={(e) => {
           const target = e.target as HTMLImageElement;
           target.onerror = null;
