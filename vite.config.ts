@@ -7,13 +7,19 @@ import fs from 'fs';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Create game.js file for WeChat mini-game
+  // Create entry point file for WeChat mini-game
   const createGameJsFile = () => ({
     name: 'create-game-js',
     closeBundle() {
+      // Create a directory for the game assets if it doesn't exist
+      if (!fs.existsSync('dist')) {
+        fs.mkdirSync('dist');
+      }
+      
+      // Create a minimal entry point that imports the main bundle
       const gameJsContent = `
 // game.js for WeChat Mini Game
-import './assets/index.js';
+require('./assets/index.js');
 
 // WeChat mini-game initialization
 wx.onShow(function() {
@@ -31,12 +37,6 @@ canvas.width = systemInfo.windowWidth;
 canvas.height = systemInfo.windowHeight;
       `;
       
-      // Ensure dist directory exists
-      if (!fs.existsSync('dist')) {
-        fs.mkdirSync('dist');
-      }
-      
-      // Write game.js file
       fs.writeFileSync('dist/game.js', gameJsContent);
     }
   });
@@ -63,11 +63,14 @@ canvas.height = systemInfo.windowHeight;
       cssCodeSplit: false,
       rollupOptions: {
         output: {
-          manualChunks: undefined,
-          // WeChat mini-games have specific naming conventions and size limits
-          entryFileNames: 'assets/[name].js',
-          chunkFileNames: 'assets/[name].js',
+          // Bundle everything into a single file
+          format: 'iife',
+          entryFileNames: 'assets/index.js',
+          chunkFileNames: 'assets/index.js',
           assetFileNames: 'assets/[name].[ext]',
+          // Ensure everything is bundled into one file
+          manualChunks: undefined,
+          inlineDynamicImports: true
         }
       }
     }
